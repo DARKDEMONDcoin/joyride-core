@@ -29,6 +29,7 @@ const QRCodeSVG = lazy(() =>
 );
 import { PortfolioReferralsHero } from "@/pages/billing/referrals/PortfolioReferralsHero";
 import MoonshotHero from "@/pages/billing/referrals/mobile/MoonshotHero";
+import TasksMenu from "@/pages/billing/referrals/mobile/TasksMenu";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import AppSidebar from "@/components/layout/AppSidebar";
@@ -230,6 +231,7 @@ const ReferralsPage = () => {
   const [userTasks, setUserTasks] = useState<UserTask[]>([]);
   const [justCopied, setJustCopied] = useState(false);
   const [qrOpen, setQrOpen] = useState(false);
+  const [tasksMenuOpen, setTasksMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const isDesktop = useIsDesktop();
@@ -500,17 +502,11 @@ const ReferralsPage = () => {
                 {mobileTitle}
               </h1>
               <button
-                onClick={() =>
-                  isMobileSubRoute ? navigate("/legal/affiliate") : setQrOpen(true)
-                }
-                aria-label={isMobileSubRoute ? "Program rules" : "QR code"}
+                onClick={() => setTasksMenuOpen(true)}
+                aria-label="Tasks menu"
                 className="grid h-10 w-10 place-items-center justify-self-end rounded-full border border-white/10 bg-white/[0.05] text-white transition active:scale-90"
               >
-                {isMobileSubRoute ? (
-                  <FileText className="h-[18px] w-[18px]" strokeWidth={2} />
-                ) : (
-                  <QrCode className="h-[18px] w-[18px]" strokeWidth={2} />
-                )}
+                <FileText className="h-[18px] w-[18px]" strokeWidth={2} />
               </button>
             </div>
           </header>
@@ -521,10 +517,15 @@ const ReferralsPage = () => {
                 <Outlet />
               </div>
             ) : (
-              <MoonshotHero onShareClick={() => setQrOpen(true)} />
+              <MoonshotHero />
             )}
           </main>
         </div>
+        <TasksMenu
+          open={tasksMenuOpen}
+          onClose={() => setTasksMenuOpen(false)}
+          onQr={() => setQrOpen(true)}
+        />
         </MobilePushShell>
       )}
 

@@ -18,6 +18,8 @@ import {
   Sparkles,
   Menu,
   TrendingUp,
+  ChevronLeft,
+  FileText,
 } from "lucide-react";
 // qrcode.react ships its own SVG renderer (~15KB gz). It's only needed when
 // the user opens the QR overlay, so lazy-load it — the referrals landing no
@@ -26,6 +28,7 @@ const QRCodeSVG = lazy(() =>
   import("qrcode.react").then((m) => ({ default: m.QRCodeSVG })),
 );
 import { PortfolioReferralsHero } from "@/pages/billing/referrals/PortfolioReferralsHero";
+import MoonshotHero from "@/pages/billing/referrals/mobile/MoonshotHero";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import AppSidebar from "@/components/layout/AppSidebar";
@@ -205,7 +208,18 @@ const TABS = [
 const ReferralsPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobileSubRoute = /\/settings\/referrals\/(program|tasks|withdrawals)/.test(location.pathname);
+  const isMobileSubRoute = /\/settings\/referrals\/(program|tasks|withdrawals|prizes)/.test(
+    location.pathname,
+  );
+  const mobileTitle = /\/prizes/.test(location.pathname)
+    ? "My Prizes"
+    : /\/program/.test(location.pathname)
+      ? "Program Rules"
+      : /\/tasks/.test(location.pathname)
+        ? "Tasks"
+        : /\/withdrawals/.test(location.pathname)
+          ? "Withdraw"
+          : "Megsy Together";
   const qrRef = useRef<SVGSVGElement | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
   const [code, setCode] = useState("");

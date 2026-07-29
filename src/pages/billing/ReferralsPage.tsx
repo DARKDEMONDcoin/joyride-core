@@ -550,13 +550,13 @@ const ReferralsPage = () => {
           >
             <button
               onClick={() => setQrOpen(false)}
-              className="lg-liquid-glass absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full text-white/85 hover:text-white transition"
+              className="lg-liquid-glass absolute top-4 z-10 grid h-9 w-9 place-items-center rounded-full text-white/85 hover:text-white transition ltr:right-4 rtl:left-4"
               aria-label="Close"
             >
               <X className="h-4 w-4" strokeWidth={1.8} />
             </button>
 
-            <div className="text-center">
+            <div className="px-12 pt-1 text-center">
               <h2
                 className="text-[22px] leading-tight text-white"
                 style={{ fontWeight: 500, letterSpacing: "-0.02em" }}

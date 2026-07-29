@@ -113,6 +113,7 @@ const ReferralsDashboardTab = lazy(() => import("./pages/billing/referrals/Dashb
 const ReferralsProgramTab = lazy(() => import("./pages/billing/referrals/ProgramTab"));
 const ReferralsTasksTab = lazy(() => import("./pages/billing/referrals/TasksTab"));
 const ReferralsWithdrawalsTab = lazy(() => import("./pages/billing/referrals/WithdrawalsTab"));
+const ReferralsPrizesTab = lazy(() => import("./pages/billing/referrals/PrizesTab"));
 const ReferralResourcesPage = lazy(() => import("./pages/billing/ReferralResourcesPage"));
 
 
@@ -1125,6 +1126,7 @@ const App = () => {
                             <Route path="program" element={<ReferralsProgramTab />} />
 
                             <Route path="tasks" element={<ReferralsTasksTab />} />
+                            <Route path="prizes" element={<ReferralsPrizesTab />} />
                             <Route path="withdrawals" element={<ReferralsWithdrawalsTab />} />
                           </Route>
                           <Route

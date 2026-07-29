@@ -1,100 +1,112 @@
-/** @doc Fanned prize cards for the mobile referral hero (Moonshot-style). */
-import { GOLD, GOLD_SOFT } from "./tokens";
+/** @doc Fanned membership-credit cards for the mobile referral hero. */
 
-export type PrizeCard = { label: string; value: string; unit: string };
-
-const cardBase: React.CSSProperties = {
-  position: "absolute",
-  width: 132,
-  height: 178,
-  borderRadius: 20,
-  border: `1px solid ${GOLD}44`,
-  background:
-    "linear-gradient(165deg, rgba(201,162,76,0.22) 0%, rgba(20,20,20,0.95) 55%, rgba(0,0,0,1) 100%)",
-  boxShadow: "0 30px 60px -30px rgba(201,162,76,0.45)",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  textAlign: "center",
-  padding: 12,
+export type CreditCard = {
+  /** Big value, e.g. "3" */
+  value: string;
+  /** Unit under/next to the value, e.g. "Days" */
+  unit: string;
+  /** Card face gradient */
+  face: string;
+  /** Small caption at the top-left of the card */
+  caption?: string;
 };
 
-function Card({
-  prize,
+function Face({
+  card,
   style,
-  dim,
+  side,
 }: {
-  prize: PrizeCard;
+  card: CreditCard;
   style: React.CSSProperties;
-  dim?: boolean;
+  side?: boolean;
 }) {
   return (
-    <div style={{ ...cardBase, ...style, opacity: dim ? 0.55 : 1 }}>
-      <span className="text-[9.5px] font-medium uppercase tracking-[0.18em] text-white/50">
-        {prize.label}
-      </span>
-      <span
-        className="mt-2 text-[34px] font-light leading-none tabular-nums"
-        style={{
-          background: `linear-gradient(180deg, #ffffff 0%, ${GOLD_SOFT} 60%, ${GOLD} 100%)`,
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-        }}
-      >
-        {prize.value}
-      </span>
-      <span className="mt-1.5 text-[10.5px] leading-tight text-white/55">{prize.unit}</span>
+    <div
+      style={{
+        position: "absolute",
+        width: 168,
+        height: 108,
+        borderRadius: 14,
+        padding: 12,
+        overflow: "hidden",
+        background: card.face,
+        boxShadow: side
+          ? "0 20px 40px -22px rgba(0,0,0,0.9)"
+          : "0 26px 54px -20px rgba(0,0,0,0.95)",
+        filter: side ? "blur(1.6px)" : undefined,
+        ...style,
+      }}
+    >
+      {card.caption && (
+        <span
+          className="block text-[9.5px] italic"
+          style={{ color: "rgba(20,20,20,0.55)" }}
+        >
+          {card.caption}
+        </span>
+      )}
+      <div className="absolute bottom-2.5 right-3 flex items-baseline gap-1">
+        <span
+          className="text-[30px] leading-none"
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "#101010" }}
+        >
+          {card.value}
+        </span>
+        <span className="text-[12px]" style={{ color: "rgba(16,16,16,0.7)" }}>
+          {card.unit}
+        </span>
+      </div>
     </div>
   );
 }
 
-export default function PrizeFan({ prizes }: { prizes: PrizeCard[] }) {
-  const [left, center, right] = prizes;
+export default function PrizeFan({ cards }: { cards: CreditCard[] }) {
+  const [left, center, right] = cards;
   return (
-    <div className="relative mx-auto h-[210px] w-full max-w-[320px]">
-      {/* Halo */}
+    <div className="relative mx-auto h-[210px] w-full max-w-[360px]">
+      {/* soft light behind the stack */}
       <div
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[240px] w-[240px] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[300px] -translate-x-1/2 -translate-y-1/2"
         style={{
           background:
-            "radial-gradient(circle, rgba(201,162,76,0.28) 0%, rgba(201,162,76,0.06) 45%, transparent 70%)",
-          filter: "blur(6px)",
+            "radial-gradient(ellipse at center, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.03) 45%, transparent 72%)",
         }}
       />
       {left && (
-        <Card
-          prize={left}
-          dim
+        <Face
+          card={left}
+          side
           style={{
             left: "50%",
-            top: 26,
-            transform: "translateX(-50%) translateX(-78px) rotate(-16deg) scale(0.88)",
+            top: 52,
+            transform: "translateX(-50%) translateX(-148px) rotate(-17deg)",
           }}
         />
       )}
       {right && (
-        <Card
-          prize={right}
-          dim
+        <Face
+          card={right}
+          side
           style={{
             left: "50%",
-            top: 26,
-            transform: "translateX(-50%) translateX(78px) rotate(16deg) scale(0.88)",
+            top: 52,
+            transform: "translateX(-50%) translateX(148px) rotate(17deg)",
           }}
         />
       )}
       {center && (
-        <Card
-          prize={center}
+        <div
+          className="absolute left-1/2 top-6 -translate-x-1/2"
           style={{
-            left: "50%",
-            top: 12,
-            transform: "translateX(-50%)",
             zIndex: 2,
-            boxShadow: "0 34px 70px -26px rgba(201,162,76,0.6)",
+            padding: 8,
+            borderRadius: 22,
+            background: "#000",
+            boxShadow: "0 30px 70px -26px rgba(140,220,220,0.35)",
           }}
-        />
+        >
+          <Face card={center} style={{ position: "relative", left: 0, top: 0 }} />
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,5 @@
 /** @doc Fanned prize cards for the mobile referral hero (Moonshot-style). */
-import { GOLD, GOLD_SOFT } from "../../ReferralsPage";
+import { GOLD, GOLD_SOFT } from "./tokens";
 
 export type PrizeCard = { label: string; value: string; unit: string };
 

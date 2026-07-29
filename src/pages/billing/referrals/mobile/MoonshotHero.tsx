@@ -2,7 +2,8 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronRight, Share2, Copy, Check, Users, Wallet } from "lucide-react";
 import PrizeFan from "./PrizeFan";
-import { useReferrals, GOLD, GOLD_SOFT, COMMISSION_PCT, CREDITS_PER_SIGNUP } from "../../ReferralsPage";
+import { useReferrals } from "../../ReferralsPage";
+import { GOLD, GOLD_SOFT, COMMISSION_PCT, CREDITS_PER_SIGNUP } from "./tokens";
 
 export default function MoonshotHero({ onShareClick }: { onShareClick?: () => void }) {
   const navigate = useNavigate();

@@ -7,18 +7,17 @@ export default function PrizesTab() {
 
   if (earns.length === 0) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
+      <div className="flex min-h-[70vh] flex-col items-center justify-center px-6 text-center">
         <div
-          className="grid h-[104px] w-[104px] place-items-center rounded-3xl"
+          className="h-[100px] w-[178px] rounded-xl"
           style={{
-            background: "hsl(0 0% 100% / 0.035)",
-            border: `1px solid ${GOLD}33`,
+            background: "linear-gradient(150deg,#232323 0%,#1a1a1a 60%,#151515 100%)",
+            filter: "blur(1px)",
           }}
-        >
-          <Gift className="h-9 w-9" strokeWidth={1.4} style={{ color: GOLD }} />
-        </div>
-        <p className="mt-6 max-w-[240px] text-[13px] leading-relaxed text-white/45">
-          No prizes yet. Invite friends to sign up or subscribe to earn prizes.
+        />
+        <p className="mt-8 text-[17px] text-white/85">No prizes yet</p>
+        <p className="mt-2 max-w-[300px] text-[14.5px] leading-relaxed text-white/45">
+          Invite friends to sign up or subscribe to earn prizes
         </p>
       </div>
     );

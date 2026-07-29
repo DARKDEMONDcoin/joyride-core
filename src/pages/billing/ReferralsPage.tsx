@@ -463,24 +463,40 @@ const ReferralsPage = () => {
         >
         <div
           dir="ltr"
-          className="min-h-[100dvh] antialiased bg-[#0a0a0a] text-white"
+          className="min-h-[100dvh] antialiased bg-black text-white"
           style={{ fontFamily: "Inter, ui-sans-serif, system-ui, sans-serif" }}
         >
-          <header
-            className="sticky top-0 z-40"
-            style={{ backgroundColor: "#0a0a0a", borderBottom: "1px solid var(--overlay-white-08)" }}
-          >
-            <div className="mx-auto flex h-14 w-full items-center justify-between px-4">
-              <MobileSidebarButton
-                onClick={() => setSidebarOpen(true)}
-                testId="mobile-open-sidebar"
-              />
+          <header className="sticky top-0 z-40 bg-black/85 backdrop-blur-xl">
+            <div className="mx-auto grid h-14 w-full grid-cols-[44px_1fr_44px] items-center px-3">
+              {isMobileSubRoute ? (
+                <button
+                  onClick={() => navigate("/settings/referrals")}
+                  aria-label="Back"
+                  className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white/[0.05] text-white transition active:scale-90"
+                >
+                  <ChevronLeft className="h-5 w-5" strokeWidth={2.2} />
+                </button>
+              ) : (
+                <MobileSidebarButton
+                  onClick={() => setSidebarOpen(true)}
+                  testId="mobile-open-sidebar"
+                />
+              )}
+              <h1 className="text-center text-[15px] font-medium tracking-tight text-white">
+                {mobileTitle}
+              </h1>
               <button
-                onClick={() => setQrOpen(true)}
-                aria-label="QR code"
-                className="grid h-11 w-11 place-items-center rounded-full text-white transition active:scale-90"
+                onClick={() =>
+                  isMobileSubRoute ? navigate("/legal/affiliate") : setQrOpen(true)
+                }
+                aria-label={isMobileSubRoute ? "Program rules" : "QR code"}
+                className="grid h-10 w-10 place-items-center justify-self-end rounded-full border border-white/10 bg-white/[0.05] text-white transition active:scale-90"
               >
-                <QrCode className="h-6 w-6" strokeWidth={2} />
+                {isMobileSubRoute ? (
+                  <FileText className="h-[18px] w-[18px]" strokeWidth={2} />
+                ) : (
+                  <QrCode className="h-[18px] w-[18px]" strokeWidth={2} />
+                )}
               </button>
             </div>
           </header>
@@ -488,16 +504,10 @@ const ReferralsPage = () => {
           <main className="w-full pb-24">
             {isMobileSubRoute ? (
               <div className="px-4 py-4">
-                <button
-                  onClick={() => navigate("/settings/referrals")}
-                  className="mb-4 text-[13px] text-white/70 hover:text-white transition"
-                >
-                  ← Back
-                </button>
                 <Outlet />
               </div>
             ) : (
-              <PortfolioReferralsHero onShareClick={() => setQrOpen(true)} />
+              <MoonshotHero onShareClick={() => setQrOpen(true)} />
             )}
           </main>
         </div>

@@ -1,9 +1,10 @@
-/** @doc Fanned membership-credit cards for the mobile referral hero (oil-slick faces). */
+/** @doc Fanned Megsy reward cards for the mobile referral hero (oil-slick faces + brand star). */
+import MegsyStar from "@/components/branding/MegsyStar";
 
 export type CreditCard = {
-  /** Big value, e.g. "3" */
+  /** Big value, e.g. "15" or "20%" */
   value: string;
-  /** Unit under/next to the value, e.g. "Days" */
+  /** Unit under/next to the value, e.g. "Credits" */
   unit: string;
   /** Base hue for the oil-slick face */
   hue: number;
@@ -59,14 +60,30 @@ function Face({
             "linear-gradient(115deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.06) 38%, rgba(255,255,255,0) 52%, rgba(255,255,255,0.18) 88%)",
         }}
       />
+
+      {/* brand star watermark */}
+      <MegsyStar className="pointer-events-none absolute -bottom-3 -left-2 h-16 w-16 opacity-[0.16] text-black" />
+
+      {/* brand lockup */}
+      <div className="relative flex items-center gap-1.5">
+        <MegsyStar className="h-3 w-3" />
+        <span
+          className="text-[9px] font-semibold uppercase tracking-[0.18em]"
+          style={{ color: "rgba(16,16,16,0.72)" }}
+        >
+          Megsy
+        </span>
+      </div>
+
       {card.caption && (
         <span
-          className="relative block text-[9.5px] italic"
+          className="relative mt-0.5 block text-[9.5px]"
           style={{ color: "rgba(20,20,20,0.62)" }}
         >
           {card.caption}
         </span>
       )}
+
       <div className="absolute bottom-2.5 right-3 flex items-baseline gap-1">
         <span
           className="text-[30px] leading-none"

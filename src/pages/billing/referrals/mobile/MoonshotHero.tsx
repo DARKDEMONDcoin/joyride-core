@@ -1,53 +1,46 @@
-/** @doc Mobile referral hero — fanned membership-credit cards, invite CTA and task cards. */
-import { useNavigate } from "react-router-dom";
-import { ChevronRight, Plus, UserPlus, Music4 } from "lucide-react";
+/** @doc Mobile referral hero — oil-slick credit cards, live program stats and invite tasks. */
+import { UserPlus, BadgeCheck, Coins } from "lucide-react";
 import PrizeFan, { type CreditCard } from "./PrizeFan";
 import { useReferrals } from "../../ReferralsPage";
-import { CREDITS_PER_SIGNUP } from "./tokens";
+import { CREDITS_PER_SIGNUP, COMMISSION_PCT } from "./tokens";
 
 const CARDS: CreditCard[] = [
-  {
-    value: "365",
-    unit: "Days",
-    caption: "Membership Credits",
-    face: "linear-gradient(150deg,#ffffff 0%,#e9e9ea 55%,#c9c9cc 100%)",
-  },
-  {
-    value: "3",
-    unit: "Days",
-    caption: "Membership Credits",
-    face: "linear-gradient(135deg,#a9ecec 0%,#7fd8dd 45%,#5fb9c9 100%)",
-  },
-  {
-    value: "30",
-    unit: "Days",
-    caption: "Membership Credits",
-    face: "linear-gradient(140deg,#cfe0fb 0%,#9fbcf3 55%,#7f9fe6 100%)",
-  },
+  { value: "365", unit: "Days", caption: "Membership Credits", hue: 288 },
+  { value: "3", unit: "Days", caption: "Membership Credits", hue: 186 },
+  { value: "30", unit: "Days", caption: "Membership Credits", hue: 32 },
 ];
 
 export default function MoonshotHero() {
-  const navigate = useNavigate();
-  const { refs, shareLink } = useReferrals();
+  const { refs, shareLink, signups, totalEarned, available } = useReferrals();
 
-  const subscribed = refs.filter((r) => r.status === "active" || r.status === "approved").length;
+  const subscribed = refs.filter(
+    (r) => r.status === "active" || r.status === "approved",
+  ).length;
+
+  const stats = [
+    { label: "Invites", value: String(signups || refs.length) },
+    { label: "Subscribed", value: String(subscribed) },
+    { label: "Earned", value: `$${(totalEarned ?? 0).toFixed(2)}` },
+    { label: "Available", value: `$${(available ?? 0).toFixed(2)}` },
+  ];
 
   const tasks = [
     {
       icon: UserPlus,
       title: "Invite a friend to join Megsy",
-      count: refs.length,
+      reward: `+${CREDITS_PER_SIGNUP} credits for both of you`,
+      count: signups || refs.length,
     },
     {
-      icon: Music4,
+      icon: BadgeCheck,
       title: "Invite a friend to subscribe to Megsy Membership",
+      reward: `+${COMMISSION_PCT}% commission on every payment`,
       count: subscribed,
     },
   ];
 
   return (
     <div className="flex min-h-[calc(100dvh-56px)] flex-col px-5 pb-8">
-      {/* Fanned membership credit cards */}
       <div className="mt-10">
         <PrizeFan cards={CARDS} />
       </div>
@@ -61,24 +54,29 @@ export default function MoonshotHero() {
 
       <button
         onClick={() => shareLink()}
-        className="mx-auto mt-6 rounded-lg px-5 py-2.5 text-[15px] text-white/90 transition active:scale-[0.97]"
-        style={{ background: "hsl(0 0% 100% / 0.10)" }}
+        className="mx-auto mt-6 w-full max-w-[300px] rounded-full bg-white py-3 text-[15px] font-semibold text-black transition active:scale-[0.97]"
       >
         Invite to earn chances
       </button>
 
-      <button
-        onClick={() => navigate("/settings/referrals/prizes")}
-        className="mx-auto mt-4 inline-flex items-center gap-1 text-[15px] text-white/65 transition active:opacity-70"
+      {/* Live program stats */}
+      <div
+        className="mt-6 grid grid-cols-4 gap-px overflow-hidden rounded-2xl"
+        style={{ background: "hsl(0 0% 100% / 0.06)" }}
       >
-        My Prizes
-        <ChevronRight className="h-4 w-4" strokeWidth={2} />
-      </button>
+        {stats.map((s) => (
+          <div key={s.label} className="px-1 py-3 text-center" style={{ background: "#0b0b0b" }}>
+            <p className="text-[15px] font-semibold text-white">{s.value}</p>
+            <p className="mt-0.5 text-[10.5px] text-white/50">{s.label}</p>
+          </div>
+        ))}
+      </div>
 
       <div className="flex-1" />
 
-      <p className="mt-10 text-center text-[13.5px] text-white/80">
-        Complete any task below, and both of you get [ {CREDITS_PER_SIGNUP} ] credits.
+      <p className="mt-8 text-center text-[13.5px] text-white/75">
+        Complete any task below — you and your friend each get {CREDITS_PER_SIGNUP} credits,
+        plus {COMMISSION_PCT}% of every payment they make.
       </p>
 
       <div className="mt-4 space-y-3">
@@ -88,28 +86,30 @@ export default function MoonshotHero() {
             className="rounded-2xl px-4 py-4"
             style={{
               background: "hsl(0 0% 100% / 0.055)",
-              border: "1px solid hsl(0 0% 100% / 0.05)",
+              border: "1px solid hsl(0 0% 100% / 0.06)",
             }}
           >
-            <div className="flex items-start gap-3">
-              <t.icon className="mt-0.5 h-5 w-5 shrink-0 text-white/85" strokeWidth={1.7} />
-              <p className="min-w-0 text-[16px] leading-snug text-white">{t.title}</p>
-            </div>
-            <div className="mt-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
               <span
-                className="grid h-9 w-9 place-items-center rounded-full text-white/80"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-xl"
                 style={{ background: "hsl(0 0% 100% / 0.08)" }}
-                aria-hidden
               >
-                <Plus className="h-4 w-4" strokeWidth={2} />
+                <t.icon className="h-[19px] w-[19px] text-white/90" strokeWidth={1.7} />
               </span>
-              <button
-                onClick={() => shareLink()}
-                className="rounded-full bg-white px-6 py-2 text-[14px] font-medium text-black transition active:scale-95"
-              >
-                Invite
-              </button>
+              <div className="min-w-0 flex-1">
+                <p className="text-[15px] leading-snug text-white">{t.title}</p>
+                <p className="mt-0.5 flex items-center gap-1 text-[12px] text-white/55">
+                  <Coins className="h-3.5 w-3.5" strokeWidth={1.8} />
+                  {t.reward} · {t.count} done
+                </p>
+              </div>
             </div>
+            <button
+              onClick={() => shareLink()}
+              className="mt-3.5 w-full rounded-full bg-white py-2.5 text-[14.5px] font-semibold text-black transition active:scale-[0.98]"
+            >
+              Invite
+            </button>
           </div>
         ))}
       </div>

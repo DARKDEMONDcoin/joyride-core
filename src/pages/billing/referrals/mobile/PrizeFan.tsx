@@ -1,15 +1,28 @@
-/** @doc Fanned membership-credit cards for the mobile referral hero. */
+/** @doc Fanned membership-credit cards for the mobile referral hero (oil-slick faces). */
 
 export type CreditCard = {
   /** Big value, e.g. "3" */
   value: string;
   /** Unit under/next to the value, e.g. "Days" */
   unit: string;
-  /** Card face gradient */
-  face: string;
+  /** Base hue for the oil-slick face */
+  hue: number;
   /** Small caption at the top-left of the card */
   caption?: string;
 };
+
+/** Identical oil-sheen recipe, only the hue changes per card. */
+function oilFace(hue: number): React.CSSProperties {
+  const h = (n: number) => `hsl(${(hue + n + 360) % 360} 85% 62%)`;
+  return {
+    backgroundImage: [
+      "radial-gradient(120% 90% at 18% 12%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 45%)",
+      `conic-gradient(from 210deg at 30% 110%, ${h(0)} 0deg, ${h(45)} 70deg, ${h(120)} 150deg, ${h(200)} 230deg, ${h(300)} 300deg, ${h(0)} 360deg)`,
+      `linear-gradient(150deg, ${h(-25)} 0%, ${h(35)} 100%)`,
+    ].join(","),
+    backgroundBlendMode: "screen, overlay, normal",
+  };
+}
 
 function Face({
   card,
@@ -29,18 +42,27 @@ function Face({
         borderRadius: 14,
         padding: 12,
         overflow: "hidden",
-        background: card.face,
+        border: "1px solid rgba(255,255,255,0.35)",
         boxShadow: side
           ? "0 20px 40px -22px rgba(0,0,0,0.9)"
           : "0 26px 54px -20px rgba(0,0,0,0.95)",
-        filter: side ? "blur(1.6px)" : undefined,
+        ...oilFace(card.hue),
         ...style,
       }}
     >
+      {/* glossy sweep */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(115deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.06) 38%, rgba(255,255,255,0) 52%, rgba(255,255,255,0.18) 88%)",
+        }}
+      />
       {card.caption && (
         <span
-          className="block text-[9.5px] italic"
-          style={{ color: "rgba(20,20,20,0.55)" }}
+          className="relative block text-[9.5px] italic"
+          style={{ color: "rgba(20,20,20,0.62)" }}
         >
           {card.caption}
         </span>
@@ -48,11 +70,11 @@ function Face({
       <div className="absolute bottom-2.5 right-3 flex items-baseline gap-1">
         <span
           className="text-[30px] leading-none"
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "#101010" }}
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif", color: "#0e0e0e" }}
         >
           {card.value}
         </span>
-        <span className="text-[12px]" style={{ color: "rgba(16,16,16,0.7)" }}>
+        <span className="text-[12px]" style={{ color: "rgba(14,14,14,0.72)" }}>
           {card.unit}
         </span>
       </div>
@@ -64,7 +86,6 @@ export default function PrizeFan({ cards }: { cards: CreditCard[] }) {
   const [left, center, right] = cards;
   return (
     <div className="relative mx-auto h-[210px] w-full max-w-[360px]">
-      {/* soft light behind the stack */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 h-[260px] w-[300px] -translate-x-1/2 -translate-y-1/2"
         style={{
@@ -102,7 +123,7 @@ export default function PrizeFan({ cards }: { cards: CreditCard[] }) {
             padding: 8,
             borderRadius: 22,
             background: "#000",
-            boxShadow: "0 30px 70px -26px rgba(140,220,220,0.35)",
+            boxShadow: "0 30px 70px -26px rgba(160,200,255,0.30)",
           }}
         >
           <Face card={center} style={{ position: "relative", left: 0, top: 0 }} />

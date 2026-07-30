@@ -641,7 +641,18 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
   const [dragging, setDragging] = useState(false);
   const touch = useRef({ x: 0, y: 0, active: false, axis: "" as "" | "x" | "y" }).current;
 
+  const isInteractiveTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+    return Boolean(target.closest('button, a, input, textarea, select, [role="button"], [data-fs-action]'));
+  };
+
   const onTouchStart = (e: import("react").TouchEvent) => {
+    if (isInteractiveTarget(e.target)) {
+      touch.active = false;
+      touch.axis = "";
+      setDragging(false);
+      return;
+    }
     touch.x = e.touches[0].clientX;
     touch.y = e.touches[0].clientY;
     touch.active = true;
@@ -675,9 +686,18 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
   const [ripple, setRipple] = useState<{ id: number; x: number; y: number } | null>(null);
   const press = (e: import("react").MouseEvent<HTMLButtonElement>, run: () => void) => {
     const r = e.currentTarget.getBoundingClientRect();
-    setRipple({ id: Date.now(), x: e.clientX - r.left, y: e.clientY - r.top });
+    const x = e.clientX ? e.clientX - r.left : r.width / 2;
+    const y = e.clientY ? e.clientY - r.top : r.height / 2;
+    setRipple({ id: Date.now(), x, y });
     navigator.vibrate?.(8);
     run();
+  };
+
+  const stopSwipeCapture = (e: import("react").TouchEvent) => {
+    e.stopPropagation();
+    touch.active = false;
+    touch.axis = "";
+    setDragging(false);
   };
 
   return (
@@ -704,6 +724,9 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
       {/* skip / enter directly */}
       <button
         type="button"
+        data-fs-action="true"
+        onTouchStart={stopSwipeCapture}
+        onTouchEnd={stopSwipeCapture}
         onClick={() => onFinish?.()}
         style={{
           position: "absolute",
@@ -717,6 +740,7 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
           color: "#fff",
           fontSize: 13,
           fontWeight: 600,
+          touchAction: "manipulation",
         }}
       >
         Skip
@@ -734,6 +758,7 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
           objectFit: "cover",
           filter: "blur(12px)",
           transform: `scale(${1.1 + index * 0.035}) translate3d(${index * -8}px, 0, 0)`,
+          pointerEvents: "none",
         }}
       />
       <video
@@ -756,7 +781,7 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
           pointerEvents: "none",
         }}
       />
-      <div style={{ position: "absolute", inset: 0, background: "rgba(138,154,170,0.3)" }} />
+      <div style={{ position: "absolute", inset: 0, background: "rgba(138,154,170,0.3)", pointerEvents: "none" }} />
 
 
       <div
@@ -830,6 +855,9 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
           <button
             type="button"
             aria-label="Back"
+            data-fs-action="true"
+            onTouchStart={stopSwipeCapture}
+            onTouchEnd={stopSwipeCapture}
             onClick={(e) => press(e, back)}
             className="fs-glass fs-cta fs-back"
             style={{
@@ -839,6 +867,7 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
               borderRadius: 999,
               display: "grid",
               placeItems: "center",
+              touchAction: "manipulation",
             }}
           >
             <ChevronLeft size={22} strokeWidth={1.8} />
@@ -846,6 +875,9 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
         )}
         <button
           type="button"
+          data-fs-action="true"
+          onTouchStart={stopSwipeCapture}
+          onTouchEnd={stopSwipeCapture}
           onClick={(e) => press(e, next)}
           className="fs-glass fs-cta"
           style={{
@@ -854,6 +886,7 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
             borderRadius: 999,
             fontSize: 16,
             fontWeight: 600,
+            touchAction: "manipulation",
           }}
         >
           {ripple && (

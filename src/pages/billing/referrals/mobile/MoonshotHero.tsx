@@ -1,17 +1,19 @@
-/** @doc Mobile referral hero — oil-slick credit cards, live program stats and invite tasks. */
-import { UserPlus, BadgeCheck, Coins } from "lucide-react";
+/** @doc Mobile referral hero — Megsy reward cards, live program stats, invite tasks. */
+import { UserPlus, BadgeCheck, Coins, Copy, Check, Wallet, Share2 } from "lucide-react";
 import PrizeFan, { type CreditCard } from "./PrizeFan";
+import MegsyStar from "@/components/branding/MegsyStar";
 import { useReferrals } from "../../ReferralsPage";
-import { CREDITS_PER_SIGNUP, COMMISSION_PCT } from "./tokens";
+import { CREDITS_PER_SIGNUP, COMMISSION_PCT, MIN_PAYOUT } from "./tokens";
 
 const CARDS: CreditCard[] = [
-  { value: "365", unit: "Days", caption: "Membership Credits", hue: 288 },
-  { value: "3", unit: "Days", caption: "Membership Credits", hue: 186 },
-  { value: "30", unit: "Days", caption: "Membership Credits", hue: 32 },
+  { value: "15", unit: "Credits", caption: "Welcome bonus", hue: 288 },
+  { value: "20", unit: "%", caption: "Lifetime commission", hue: 186 },
+  { value: "15", unit: "Credits", caption: "For your friend", hue: 32 },
 ];
 
 export default function MoonshotHero() {
-  const { refs, shareLink, signups, totalEarned, available } = useReferrals();
+  const { refs, shareLink, copyLink, justCopied, code, signups, totalEarned, available } =
+    useReferrals();
 
   const subscribed = refs.filter(
     (r) => r.status === "active" || r.status === "approved",
@@ -24,6 +26,8 @@ export default function MoonshotHero() {
     { label: "Available", value: `$${(available ?? 0).toFixed(2)}` },
   ];
 
+  const payoutPct = Math.min(100, ((available ?? 0) / MIN_PAYOUT) * 100);
+
   const tasks = [
     {
       icon: UserPlus,
@@ -33,7 +37,7 @@ export default function MoonshotHero() {
     },
     {
       icon: BadgeCheck,
-      title: "Invite a friend to subscribe to Megsy Membership",
+      title: "Invite a friend to subscribe to Megsy",
       reward: `+${COMMISSION_PCT}% commission on every payment`,
       count: subscribed,
     },
@@ -46,18 +50,43 @@ export default function MoonshotHero() {
       </div>
 
       <h2
-        className="mt-2 text-center text-[24px] leading-tight text-white"
+        className="mt-2 flex items-center justify-center gap-2 text-center text-[23px] leading-tight text-white"
         style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontWeight: 400 }}
       >
-        3-Day Membership Credits
+        <MegsyStar className="h-4 w-4 text-white/70" />
+        Share Megsy, earn forever
       </h2>
+      <p className="mt-1.5 text-center text-[13px] text-white/55">
+        {CREDITS_PER_SIGNUP} credits each on sign-up · {COMMISSION_PCT}% of every payment they make
+      </p>
 
       <button
         onClick={() => shareLink()}
-        className="mx-auto mt-6 w-full max-w-[300px] rounded-full bg-white py-3 text-[15px] font-semibold text-black transition active:scale-[0.97]"
+        className="mx-auto mt-6 flex w-full max-w-[300px] items-center justify-center gap-2 rounded-full bg-white py-3 text-[15px] font-semibold text-black transition active:scale-[0.97]"
       >
-        Invite to earn chances
+        <Share2 className="h-[17px] w-[17px]" strokeWidth={2} />
+        Invite friends
       </button>
+
+      {/* Referral code */}
+      {code && (
+        <button
+          onClick={() => copyLink()}
+          className="mx-auto mt-3 flex items-center gap-2 rounded-full px-4 py-2 text-[13px] text-white/80 transition active:scale-[0.97]"
+          style={{
+            background: "hsl(0 0% 100% / 0.06)",
+            border: "1px solid hsl(0 0% 100% / 0.09)",
+          }}
+        >
+          <span className="text-white/45">Your code</span>
+          <span className="font-mono tracking-[0.12em] text-white">{code}</span>
+          {justCopied ? (
+            <Check className="h-3.5 w-3.5 text-emerald-400" strokeWidth={2.2} />
+          ) : (
+            <Copy className="h-3.5 w-3.5 text-white/50" strokeWidth={2} />
+          )}
+        </button>
+      )}
 
       {/* Live program stats */}
       <div
@@ -72,14 +101,59 @@ export default function MoonshotHero() {
         ))}
       </div>
 
+      {/* Payout progress */}
+      <div
+        className="mt-3 rounded-2xl px-4 py-3.5"
+        style={{
+          background: "hsl(0 0% 100% / 0.045)",
+          border: "1px solid hsl(0 0% 100% / 0.06)",
+        }}
+      >
+        <div className="flex items-center gap-2">
+          <Wallet className="h-4 w-4 text-white/60" strokeWidth={1.8} />
+          <p className="flex-1 text-[13px] text-white/80">
+            {(available ?? 0) >= MIN_PAYOUT
+              ? "You can withdraw now"
+              : `$${Math.max(0, MIN_PAYOUT - (available ?? 0)).toFixed(2)} more to unlock withdrawal`}
+          </p>
+          <span className="text-[12px] text-white/45">min ${MIN_PAYOUT}</span>
+        </div>
+        <div
+          className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full"
+          style={{ background: "hsl(0 0% 100% / 0.08)" }}
+        >
+          <div
+            className="h-full rounded-full transition-all"
+            style={{
+              width: `${payoutPct}%`,
+              background: "linear-gradient(90deg, #a9ecec, #5fb9c9)",
+            }}
+          />
+        </div>
+      </div>
+
       <div className="flex-1" />
 
-      <p className="mt-8 text-center text-[13.5px] text-white/75">
-        Complete any task below — you and your friend each get {CREDITS_PER_SIGNUP} credits,
-        plus {COMMISSION_PCT}% of every payment they make.
-      </p>
+      {/* How it works */}
+      <div className="mt-8 space-y-2.5">
+        {[
+          "Share your personal invite link or code",
+          `Your friend signs up — you both get ${CREDITS_PER_SIGNUP} credits`,
+          `They subscribe — you earn ${COMMISSION_PCT}% of every payment, for life`,
+        ].map((step, i) => (
+          <div key={step} className="flex items-start gap-3">
+            <span
+              className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full text-[11px] font-semibold text-black"
+              style={{ background: "rgba(255,255,255,0.88)" }}
+            >
+              {i + 1}
+            </span>
+            <p className="text-[13.5px] leading-snug text-white/70">{step}</p>
+          </div>
+        ))}
+      </div>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-5 space-y-3">
         {tasks.map((t) => (
           <div
             key={t.title}

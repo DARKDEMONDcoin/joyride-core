@@ -717,8 +717,8 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
         overflow: "hidden",
         background: "#0a0a0a",
         fontFamily: FONT,
-        touchAction: "pan-y",
-        zIndex: 0,
+        touchAction: "none",
+        zIndex: 60,
       }}
     >
       {/* skip / enter directly */}

@@ -1,6 +1,6 @@
 /** @doc Bottom-sheet menu opened from the referral header button (mobile only). */
 import { useNavigate } from "react-router-dom";
-import { ListChecks, Gift, FileText, Wallet, QrCode, X } from "lucide-react";
+import { ListChecks, FileText, QrCode, X } from "lucide-react";
 
 type Item = { label: string; icon: typeof ListChecks; to?: string; action?: () => void };
 
@@ -18,8 +18,6 @@ export default function TasksMenu({
 
   const items: Item[] = [
     { label: "Tasks", icon: ListChecks, to: "/settings/referrals/tasks" },
-    { label: "My Prizes", icon: Gift, to: "/settings/referrals/prizes" },
-    { label: "Withdraw", icon: Wallet, to: "/settings/referrals/withdrawals" },
     { label: "Program rules", icon: FileText, to: "/settings/referrals/program" },
     { label: "Invitation QR code", icon: QrCode, action: onQr },
   ];

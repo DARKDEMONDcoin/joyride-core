@@ -9,7 +9,6 @@ import { Eye, EyeOff, ArrowLeft, ArrowRight, Check, Play } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import SEOHead from "@/components/common/SEOHead";
 import { useIsMobile } from "@/hooks/use-mobile";
-import MobileAuthIntro from "@/components/mobile-showcase/MobileAuthIntro";
 import MobileAuthFlow from "@/components/auth/mobile/MobileAuthFlow";
 import MobileAuthExtras from "@/components/auth/mobile/MobileAuthExtras";
 import { useBrandLogo } from "@/hooks/useBrandLogo";
@@ -33,7 +32,6 @@ const AUTH_MOBILE_VIDEO_URL =
 const AUTH_ASSET_BASE = "/route-assets/auth";
 
 type Step =
-  | "intro1"
   | "email"
   | "password"
   | "otp-signup"
@@ -61,12 +59,10 @@ const AuthPage = () => {
   const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
   const [verifiedResetCode, setVerifiedResetCode] = useState("");
   const isMobile = useIsMobile();
-  const [step, setStep] = useState<Step>(() =>
-    typeof window !== "undefined" && window.innerWidth < 768 ? "intro1" : "email",
-  );
+  const [step, setStep] = useState<Step>("email");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mobileError, setMobileError] = useState<string | null>(null);
-  const mobileIntroSteps: Step[] = ["intro1", "email", "password"];
+  const mobileIntroSteps: Step[] = ["email", "password"];
   const isMobileIntroStep = (s: Step) => isMobile && mobileIntroSteps.includes(s);
 
   const notifyMobileIntroError = (msg: string) => {
@@ -649,7 +645,6 @@ const AuthPage = () => {
     Step,
     { title: string; sub: string; index: number; total: number; label: string }
   > = {
-    intro1: { title: "", sub: "", index: 1, total: 1, label: authT("getStarted") },
     email: {
       title: authT("emailTitle"),
       sub: authT("emailSub"),
@@ -705,8 +700,7 @@ const AuthPage = () => {
   const isOtpStep = step === "otp-signup" || step === "otp-2fa" || step === "otp-reset";
   const showBack = step !== "email" || isMobile;
   const handleBack = () => {
-    if (isMobile && step === "email") setStep("intro1");
-    else resetFlow();
+    resetFlow();
   };
   const meta = stepMeta[step];
 
@@ -730,9 +724,8 @@ const AuthPage = () => {
   const socialCls =
     "w-full flex items-center justify-center gap-2.5 py-3 rounded-full border border-white/15 bg-transparent text-foreground/90 text-[14px] font-medium hover:border-foreground/40 hover:bg-foreground/[0.03] active:scale-[0.97] transition-[transform,border-color,background-color] duration-[280ms] [transition-timing-function:cubic-bezier(0.34,1.35,0.64,1)] will-change-transform";
 
-  // ─── Mobile intro — inline expandable email/password flow ──
-  if (isMobile && (step === "intro1" || step === "email" || step === "password")) {
-    const isExpanded = step === "email" || step === "password";
+  // ─── Mobile auth — starts directly at the email form, no intro/onboarding gate ──
+  if (isMobile && (step === "email" || step === "password")) {
     return (
       <>
         <SEOHead
@@ -741,12 +734,8 @@ const AuthPage = () => {
           path="/auth"
           noindex
         />
-        <MobileAuthIntro
-          onGoogle={handleGoogleLogin}
-          onEmail={() => setStep("email")}
-          onTelegram={undefined}
-          expanded={isExpanded}
-          showPasswordField={step === "password"}
+        <MobileAuthFlow
+          screen="email"
           email={email}
           setEmail={setEmailClear}
           password={password}
@@ -754,9 +743,18 @@ const AuthPage = () => {
           showPassword={showPassword}
           setShowPassword={setShowPassword}
           isSubmitting={isSubmitting}
+          showPasswordField={step === "password"}
+          onNextIntro={() => {}}
+          onStartCreating={() => {}}
+          onGoogle={handleGoogleLogin}
+          onGitHub={handleGitHubLogin}
+          onTelegram={() => {}}
+          onEmail={() => {}}
+          onBack={resetFlow}
           onSubmitEmail={handleCheckEmail}
           onSubmitPassword={handlePasswordLogin}
           onForgotPassword={() => setStep("forgot-password")}
+          onSwitchToCreate={() => {}}
           error={mobileError}
         />
       </>
@@ -808,8 +806,7 @@ const AuthPage = () => {
     );
   }
 
-  // ─── Mobile email/password flow (over aurora bg) is handled below by adding
-  //     a mobile back button that returns to intro1 ────────────────────────
+  // ─── Desktop email/password flow ────────────────────────
 
   return (
     <>

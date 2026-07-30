@@ -1,6 +1,6 @@
 /** @doc Mobile auth flow (email + password) — matches MobileAuthIntro visual language. */
 import { m as motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
+import { AlertCircle, ArrowLeft, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { t as authT, useUserLang } from "@/lib/authI18n";
 
 type Screen = "intro" | "email";
@@ -26,6 +26,7 @@ interface Props {
   onSubmitPassword: () => void;
   onForgotPassword: () => void;
   onSwitchToCreate: () => void;
+  error?: string | null;
 }
 
 const FONT_SERIF = '"ITC Garamond Std Narrow", "Playfair Display", Garamond, serif';
@@ -82,7 +83,7 @@ export default function MobileAuthFlow(p: Props) {
             transition={{ duration: 0.3 }}
             className="relative z-10 flex flex-col min-h-[100dvh]"
           >
-            <TopBar showBack onBack={p.onBack} />
+            <TopBar showBack={p.showPasswordField} onBack={p.onBack} />
 
             <div className="flex-1 flex flex-col justify-center px-6">
               <div className="w-full max-w-sm mx-auto mb-8 text-center">
@@ -187,22 +188,40 @@ export default function MobileAuthFlow(p: Props) {
                   )}
                 </AnimatePresence>
 
+                <AnimatePresence>
+                  {p.error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6, height: 0 }}
+                      animate={{ opacity: 1, y: 0, height: "auto" }}
+                      exit={{ opacity: 0, y: -6, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden rounded-xl border border-red-400/25 bg-red-500/10 px-3.5 py-3 text-white/90"
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <AlertCircle className="h-4 w-4 shrink-0 text-red-300" />
+                        <p className="text-[13px] leading-[18px]">{p.error}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 {/* Primary button — white when filled, outlined when empty */}
                 {(() => {
                   const hasEmail = !!p.email?.trim();
+                  const isReady = p.showPasswordField ? !!p.password?.trim() : hasEmail;
                   return (
                     <button
                       type="submit"
-                      disabled={p.isSubmitting || !p.email}
+                      disabled={p.isSubmitting || !isReady}
                       className={`w-full h-[52px] rounded-full flex items-center justify-center gap-2 active:scale-[0.985] transition-colors duration-300 disabled:opacity-50 ${
-                        hasEmail
+                        isReady
                           ? "theme-fixed bg-white text-[#0b0d12] border border-white"
                           : "bg-transparent text-white border border-white/30"
                       }`}
                       style={{ fontSize: "15px", fontWeight: 600, letterSpacing: "0.1px" }}
                     >
                       {p.isSubmitting ? (
-                        <span className={`w-4 h-4 border-2 ${hasEmail ? "border-[#0b0d12]" : "border-white"} border-t-transparent rounded-full animate-spin`} />
+                        <span className={`w-4 h-4 border-2 ${isReady ? "border-[#0b0d12]" : "border-white"} border-t-transparent rounded-full animate-spin`} />
                       ) : (
                         <>
                           {p.showPasswordField ? authT("signIn") : authT("continue")}

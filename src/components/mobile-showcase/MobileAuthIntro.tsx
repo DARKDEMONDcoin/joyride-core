@@ -119,14 +119,14 @@ export default function MobileAuthIntro({
     <div
       dir={isAr ? "rtl" : "ltr"}
       className="relative min-h-[100dvh] w-full overflow-hidden bg-[#02040c] text-white"
-      style={{ fontFamily: 'Inter, -apple-system, "SF Pro Text", system-ui, sans-serif' }}
+      style={{ fontFamily: 'Inter, -apple-system, "SF Pro Text", system-ui, sans-serif', touchAction: "manipulation" }}
     >
       {/* Hero video */}
       <img
         src={`${AUTH_ASSET_BASE}/auth-mobile-fallback.webp`}
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         style={{ objectPosition: "center 48%", zIndex: 0, opacity: ready ? 0 : 1, transition: "opacity 1.2s ease-out" }}
       />
       <video
@@ -136,7 +136,7 @@ export default function MobileAuthIntro({
         muted
         playsInline
         preload="auto"
-        className="absolute inset-0 h-full w-full object-cover"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover"
         style={{ objectPosition: "center 48%", zIndex: 0, opacity: ready ? 1 : 0, transition: "opacity 1.2s ease-out" }}
         src={AUTH_MOBILE_VIDEO_URL}
       />
@@ -153,7 +153,7 @@ export default function MobileAuthIntro({
 
       {/* Content pinned to bottom */}
       <div
-        className="absolute inset-x-0 bottom-0 px-6 pb-10"
+        className="absolute inset-x-0 bottom-0 px-6 pb-10 pointer-events-auto"
         style={{ zIndex: 4, paddingBottom: "max(2.25rem, env(safe-area-inset-bottom, 0px))" }}
       >
         {/* Title */}
@@ -220,7 +220,7 @@ export default function MobileAuthIntro({
                 exit={{ opacity: 0, height: 0, marginBottom: -10 }}
                 transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                 className="theme-fixed w-full flex items-center justify-center gap-2.5 rounded-full bg-white text-[#0b0d12] active:scale-[0.985] overflow-hidden"
-                style={{ fontSize: "15px", fontWeight: 600, letterSpacing: "0.1px" }}
+                style={{ fontSize: "15px", fontWeight: 600, letterSpacing: "0.1px", touchAction: "manipulation" }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
                   <path fill="#EA4335" d="M12 5.04c1.94 0 3.66.67 5.02 1.98l3.72-3.72C18.42 1.19 15.44 0 12 0 7.32 0 3.26 2.7 1.28 6.62l4.36 3.38C6.66 7.06 9.14 5.04 12 5.04z"/>
@@ -256,7 +256,7 @@ export default function MobileAuthIntro({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.18, ease: "easeOut" }}
                   className="w-full h-full flex items-center justify-center gap-2 text-white active:scale-[0.985]"
-                  style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "0.1px" }}
+                  style={{ fontSize: "15px", fontWeight: 500, letterSpacing: "0.1px", touchAction: "manipulation" }}
                 >
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                     <rect x="3" y="5" width="18" height="14" rx="2.5" />
@@ -357,7 +357,7 @@ export default function MobileAuthIntro({
                     ? "theme-fixed bg-white text-[#0b0d12] border border-white"
                     : "bg-transparent text-white border border-white/30"
                 }`}
-                style={{ fontSize: "15px", fontWeight: 600, letterSpacing: "0.1px" }}
+                style={{ fontSize: "15px", fontWeight: 600, letterSpacing: "0.1px", touchAction: "manipulation" }}
               >
                 {isSubmitting ? (
                   <span className={`w-4 h-4 border-2 ${primaryReady ? "border-[#0b0d12]" : "border-white"} border-t-transparent rounded-full animate-spin`} />
@@ -378,7 +378,7 @@ export default function MobileAuthIntro({
               type="button"
               onClick={onTelegram}
               className="w-full flex items-center justify-center gap-1.5 py-2.5 transition"
-              style={{ color: "rgba(255,255,255,0.55)", fontSize: "13px", fontWeight: 500 }}
+              style={{ color: "rgba(255,255,255,0.55)", fontSize: "13px", fontWeight: 500, touchAction: "manipulation" }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                 <path d="M9.78 15.27l-.4 4.02c.58 0 .83-.25 1.13-.55l2.71-2.59 5.62 4.11c1.03.57 1.77.27 2.04-.95l3.7-17.34h.01c.32-1.53-.55-2.13-1.55-1.76L1.36 9.36C-.13 9.94-.11 10.75 1.1 11.12l5.6 1.74 13-8.19c.61-.4 1.17-.18.71.22"/>

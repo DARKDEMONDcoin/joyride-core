@@ -85,6 +85,7 @@ const LandingGalleryPage = lazy(() => import("./pages/landing-gallery/LandingGal
 const ServiceLandingPage = lazy(() => import("./pages/landings/ServiceLandingPage"));
 const PromoUnlockPage = lazy(() => import("./pages/PromoUnlockPage"));
 const PromoMasrPage = lazy(() => import("./pages/PromoMasrPage"));
+const WelcomeShowcasePage = lazy(() => import("./pages/onboarding/WelcomeShowcasePage"));
 const XPromoPage = lazy(() => import("./pages/XPromoPage"));
 const PublicStatusPage = lazy(() => import("./pages/PublicStatusPage"));
 const SeoLandingPage = lazy(() => import("./pages/seo/SeoLandingPage"));
@@ -112,7 +113,6 @@ const ReferralsDashboardTab = lazy(() => import("./pages/billing/referrals/Dashb
 const ReferralsProgramTab = lazy(() => import("./pages/billing/referrals/ProgramTab"));
 const ReferralsTasksTab = lazy(() => import("./pages/billing/referrals/TasksTab"));
 const ReferralsWithdrawalsTab = lazy(() => import("./pages/billing/referrals/WithdrawalsTab"));
-const ReferralsPrizesTab = lazy(() => import("./pages/billing/referrals/PrizesTab"));
 const ReferralResourcesPage = lazy(() => import("./pages/billing/ReferralResourcesPage"));
 
 
@@ -349,7 +349,10 @@ const preloadCommonRoutes = () => {
 
   // 2) Then warm the most-likely destination routes.
   const routeTasks: Array<() => Promise<unknown>> = isMobile
-    ? [() => import("./pages/auth/AuthPage")]
+    ? [
+        () => import("./pages/auth/AuthPage"),
+        () => import("./pages/onboarding/WelcomeShowcasePage"),
+      ]
     : [
         () => import("./pages/chat/ChatPage"),
         () => import("./pages/auth/AuthPage"),
@@ -525,7 +528,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Root route: no onboarding gate. Guests go to auth; signed-in users go to chat.
+// Root route:
+// - Signed-in users → ChatPage.
+// - Guests (desktop AND mobile) → LandingPage. This prevents the "empty black
+//   chat page" first-open experience for guests on phones/PWA installs.
+//   Chat is still reachable directly via /chat once signed in.
 const RootRoute = ({ authedElement }: { authedElement: React.ReactNode }) => {
   bootstrapAuth();
   const [state, setState] = useState(cachedAuthState);
@@ -538,9 +545,32 @@ const RootRoute = ({ authedElement }: { authedElement: React.ReactNode }) => {
     };
   }, []);
 
+  // No landing page: send every visitor straight into the app.
   void authedElement;
-  if (!state.resolved) return null;
-  if (!state.authenticated) return <Navigate to={pathForZone("/auth", location.pathname)} replace />;
+  if (!state.resolved) {
+    const isMobile =
+      typeof window !== "undefined" &&
+      (window.matchMedia?.("(max-width: 768px)").matches ||
+        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
+    const seenWelcome =
+      typeof window !== "undefined" &&
+      localStorage.getItem("megsy_seen_welcome") === "1";
+    if (isMobile && !seenWelcome) return <Navigate to="/welcome" replace />;
+    return null;
+  }
+  // On mobile, first-time guests see the Welcome showcase before /auth.
+  if (!state.authenticated) {
+    const isMobile =
+      typeof window !== "undefined" &&
+      (window.matchMedia?.("(max-width: 768px)").matches ||
+        /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent));
+    const seenWelcome =
+      typeof window !== "undefined" &&
+      localStorage.getItem("megsy_seen_welcome") === "1";
+    if (isMobile && !seenWelcome) {
+      return <Navigate to="/welcome" replace />;
+    }
+  }
   return <Navigate to="/chat" replace />;
 };
 
@@ -703,7 +733,7 @@ const App = () => {
                           <Route path="/auth/callback/:provider" element={<OAuthCallbackPage />} />
                           <Route path="/oauth/authorize" element={<OAuthAuthorizePage />} />
                           <Route path="/reset-password" element={<ResetPasswordPage />} />
-                          <Route path="/welcome" element={<Navigate to="/auth" replace />} />
+                          <Route path="/welcome" element={<WelcomeShowcasePage />} />
 
                           {/* Public / marketing */}
                           <Route path="/" element={<RootRoute authedElement={<ChatPage key={currentUserId} />} />} />
@@ -1095,7 +1125,6 @@ const App = () => {
                             <Route path="program" element={<ReferralsProgramTab />} />
 
                             <Route path="tasks" element={<ReferralsTasksTab />} />
-                            <Route path="prizes" element={<ReferralsPrizesTab />} />
                             <Route path="withdrawals" element={<ReferralsWithdrawalsTab />} />
                           </Route>
                           <Route

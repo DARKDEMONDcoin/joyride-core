@@ -351,13 +351,14 @@ export default function MobilePricingScreen({
               <span className="text-center text-teal-500 dark:text-teal-300">{plan === "pro" ? t.pro : t.max}</span>
               <span className="text-center" style={{ color: c.textFaint }}>{t.free}</span>
             </div>
-            <div className="h-px w-full" style={{ background: c.divider }} />
-            <ul className="divide-y" style={{ borderColor: c.rowDivider }}>
+            <div className="h-px w-full" style={{ background: c.rowDivider }} />
+            <ul>
               {features.map((f, i) => (
                 <li
                   key={i}
                   className="grid grid-cols-[minmax(0,1fr)_84px_66px] items-center gap-2 py-[6px]"
                   style={{
+                    borderTop: i === 0 ? "none" : `1px solid ${c.rowDivider}`,
                     opacity: 0,
                     animation: "pricing-row-in 360ms cubic-bezier(0.22,1,0.36,1) forwards",
                     animationDelay: `${60 + i * 35}ms`,

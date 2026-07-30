@@ -755,6 +755,7 @@ const AuthPage = () => {
           onSubmitPassword={handlePasswordLogin}
           onForgotPassword={() => setStep("forgot-password")}
           onSwitchToCreate={() => {}}
+          error={mobileError}
         />
       </>
     );

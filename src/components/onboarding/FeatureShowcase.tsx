@@ -701,6 +701,26 @@ export default function FeatureShowcase({ onFinish }: { onFinish?: () => void })
         zIndex: 0,
       }}
     >
+      {/* skip / enter directly */}
+      <button
+        type="button"
+        onClick={() => onFinish?.()}
+        style={{
+          position: "absolute",
+          top: "calc(12px + env(safe-area-inset-top))",
+          right: 16,
+          zIndex: 50,
+          padding: "8px 14px",
+          borderRadius: 999,
+          border: "1px solid rgba(255,255,255,0.25)",
+          background: "rgba(0,0,0,0.35)",
+          color: "#fff",
+          fontSize: 13,
+          fontWeight: 600,
+        }}
+      >
+        Skip
+      </button>
       <img
         src={BG}
         alt=""
